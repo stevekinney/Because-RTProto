@@ -10,10 +10,10 @@ define ["realtime-client-utils", "collaborators-view", "workspace-view", "contro
   initializeModel = (model) ->
     notes = model.createList()
     data = model.createMap
-      title: model.createString "Title or question"
+      title: model.createString "Title or Question"
       desc: model.createString "Instuctions or description"
       image: model.createString "http://developers.mozilla.org/files/2917/fxlogo.png"
-      spreadsheet: model.createString "https://docs.google.com/spreadsheet/pub?key=0Ar2Io2uAtw9TdEFvb2t5U3BiZDhQRlNSRjRTY3Q2Rmc&output=html"
+      spreadsheet: model.createString 
     context = model.createMap
       notes: notes
       data: data

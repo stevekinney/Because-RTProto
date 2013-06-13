@@ -1,20 +1,6 @@
-define "visualization", ->
+define ["utils"], (utils) ->
 
   palette = new Rickshaw.Color.Palette( { scheme: 'colorwheel' } );
-  
-  parseLocation = (url) ->
-    result = {}
-
-    result['url'] = url.split('?')[0]
-    result['hash'] = url.split('#')[1]
-    result['query'] = {}
-    
-    if url.indexOf('?') > 0
-      url.split('?')[1].split('#')[0].split('&').forEach (i) ->
-        i = i.split('=')
-        result.query[i[0]] = i[1]
-  
-    result
 
   class RickshawVisualization
     
@@ -72,7 +58,7 @@ define "visualization", ->
    
   return {
     initialize: (callback) ->
-      url = parseLocation(window.location.toString())
+      url = utils.parseLocation(window.location)
       
       if url.query.spreadsheet
         fetchGoogleSpreadsheet url.query.spreadsheet
