@@ -7,18 +7,29 @@ a {
 .control .btn-group-vertical .btn {
   width: 100%;
 }
+.control .logo {
+  min-height: 51px;
+  background-image: url("/images/logo.png");
+  background-position-y: 10px;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.control .title {
+  font-size: 20px;
+  line-height: 20px;
+}
+.toolbar .owner {
+  padding: 10px 0 0 0;
+}
+.toolbar .display-context-creator {
+  display: none;
+}
 .metadata {
   margin-bottom: 5px;
   border-bottom: 1px solid #eee;
 }
 .metadata div {
   position: relative;
-}
-.metadata .display-context-creator {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
 }
 .metadata .description {
   position: absolute;
@@ -74,7 +85,7 @@ a {
   display: block;
 }
 #note-creator.add #add-note {
-  display: block;
+  display: inline-block;
 }
 #note-creator.add #edit-note {
   display: none;
@@ -92,7 +103,7 @@ a {
   display: none;
 }
 #note-creator.edit #edit-note {
-  display: block;
+  display: inline-block;
 }
 #note-creator.view .edit {
   display: none;
@@ -114,6 +125,21 @@ a {
   width: 150px;
   height: 150px;
   background-repeat: no-repeat;
+}
+#note-creator .comments-header span.on {
+  display: none;
+}
+#note-creator .comments-header span.off {
+  display: inline;
+}
+#note-creator .comments-header.expanded span.on {
+  display: inline;
+}
+#note-creator .comments-header.expanded span.off {
+  display: none;
+}
+#comment-creator {
+  display: none;
 }
 #context-creator {
   display: none;
@@ -146,14 +172,35 @@ a {
   line-height: 1em;
   text-align: right;
   box-sizing: border-box;
+  cursor: pointer;
 }
 #authorizeButton[disabled] {
   display: none;
 }
-svg.view {
-  cursor: pointer;
+.comments {
+  margin: 0;
 }
-svg.note {
+.comments li {
+  float: left;
+  width: 100%;
+  display: none;
+  padding-left: 10px;
+  border-bottom: 1px solid #eee;
+  list-style: none;
+  color: #fff;
+  font-size: 11px;
+}
+.comments li .display-name {
+  display: inline-block;
+  float: right;
+  margin: 0 5px;
+}
+.comments li .created {
+  display: inline-block;
+  float: right;
+  margin: 0 5px;
+}
+svg.marker {
   cursor: crosshair;
 }
 svg.move {

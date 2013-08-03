@@ -8,18 +8,30 @@ a
     .btn
       width: 100%
 
+  .logo
+    min-height 51px
+    background-image url(/images/logo.png)
+    background-position-y 10px
+    background-repeat no-repeat
+    background-size contain
+
+  .title
+    font-size 20px
+    line-height 20px
+
+.toolbar
+  .owner
+    padding 10px 0 0 0
+  .display-context-creator
+    display: none
+
+
 .metadata
   margin-bottom 5px
   border-bottom 1px solid #eee
 
   div
     position relative
-
-  .display-context-creator
-    display: none
-    position: absolute
-    top: 0
-    right: 0
 
   .description
     position absolute
@@ -73,7 +85,7 @@ a
     .thumbnail
       display block
     #add-note
-      display block
+      display inline-block
     #edit-note
       display none
 
@@ -87,7 +99,7 @@ a
     #add-note
       display none
     #edit-note
-      display block
+      display inline-block
 
   &.view
     .edit
@@ -106,6 +118,20 @@ a
     width 150px
     height 150px
     background-repeat no-repeat
+
+  .comments-header
+    span.on
+      display none
+    span.off
+      display inline
+    &.expanded
+      span.on
+        display inline
+      span.off
+        display none
+
+#comment-creator
+  display none
 
 #context-creator
   display none
@@ -138,14 +164,36 @@ a
     line-height 1em
     text-align right
     box-sizing border-box
+    cursor pointer
 
 #authorizeButton[disabled]
   display none
 
+.comments
+  margin 0
+
+  li
+    float left
+    width 100%
+    display none
+    padding-left 10px
+    border-bottom 1px solid #ee
+    list-style none
+    color white
+    font-size 11px
+
+    .display-name
+      display inline-block
+      float right
+      margin 0 5px
+
+    .created
+      display inline-block
+      float right
+      margin 0 5px
+
 svg
-  &.view
-    cursor pointer
-  &.note
+  &.marker
     cursor crosshair
   &.move
     cursor move

@@ -3,9 +3,11 @@ define ["d3view"], (D3View)->
         tagName: 'g'
 
         initialize: (options)->
+            @doc = options.doc
+
             @constructor.__super__.initialize.call @,options
-            @model.get('hx').addEventListener gapi.drive.realtime.EventType.TEXT_INSERTED, _.bind @onHandleXChanged, @
-            @model.get('hy').addEventListener gapi.drive.realtime.EventType.TEXT_INSERTED, _.bind @onHandleYChanged, @
+            @model.get('hx').addEventListener gapi.drive.realtime.EventType.TEXT_INSERTED, _.bind @onHandleChanged, @
+            @model.get('hy').addEventListener gapi.drive.realtime.EventType.TEXT_INSERTED, _.bind @onHandleChanged, @
             @model.get('color').addEventListener gapi.drive.realtime.EventType.TEXT_INSERTED, _.bind @onColorChanged, @
             @model.get('title').addEventListener gapi.drive.realtime.EventType.TEXT_INSERTED, _.bind @onTitleChanged, @
             @model.get('desc').addEventListener gapi.drive.realtime.EventType.TEXT_INSERTED, _.bind @onDescriptionChanged, @
@@ -16,22 +18,22 @@ define ["d3view"], (D3View)->
             @dispatcher.on 'tool:move', _.bind @onToolMove, @
             @dispatcher.on 'tool:release', _.bind @onToolRelease, @
             @dispatcher.on 'collaborator:selected', _.bind @onCollaboratorSelected, @
+            @dispatcher.on 'note:highlight', _.bind @onNoteHighlight, @
+            @dispatcher.on 'note:unhighlight', _.bind @onNoteUnhighlight, @
 
-        onHandleXChanged: (rtEvent)->
+            @highlighted = no
+
+        onHandleChanged: (rtEvent)->
             if @lineElement
-                @lineElement.attr
+                @lineElement.transition().attr
                     'x2': @model.get('hx').getText() || 200
-
-            @circleElement.attr
-                'cx': @model.get('hx').getText() || 200
-
-        onHandleYChanged: (rtEvent)->
-            if @lineElement
-                @lineElement.attr
                     'y2': @model.get('hy').getText() || 25
+                .duration(400)
 
-            @circleElement.attr
+            @circleElement.transition().attr
+                'cx': @model.get('hx').getText() || 200
                 'cy': @model.get('hy').getText() || 25
+            .duration(400)
 
         onColorChanged: (rtEvent)->
             @circleElement.attr
@@ -58,21 +60,17 @@ define ["d3view"], (D3View)->
         onToolEngage: (ev, tool)->
             target = d3.select ev.target
 
-            target = d3.select ev.target
-
             if target.attr('data-object-id') is @model.id and target.attr('data-type') is 'handle-circle'
 
-                @dispatcher.trigger 'note:view', d3.event, @model if tool.type is 'view'
-
                 if @model.get('userId').getText() isnt '' and @model.get('userId').getText() isnt tool.user.userId and not tool.user.isOwner()
-                    @dispatcher.trigger 'note:view', d3.event, @model if tool.type is 'note'
+                    @dispatcher.trigger 'note:view', d3.event, @model if tool.type is 'marker'
 
                 else
                     #user-restricted actions are below here
 
                     @dispatcher.trigger 'note:delete', @model if tool.type is 'delete'
 
-                    @dispatcher.trigger 'note:edit', d3.event, @model if tool.type is 'note'
+                    @dispatcher.trigger 'note:edit', d3.event, @model if tool.type is 'marker'
 
                     if tool.type is 'move'
                         @engaged = true
@@ -93,6 +91,11 @@ define ["d3view"], (D3View)->
                     @circleElement.attr 'cy', y
                     @lineElement.attr 'x2', x if @lineElement
                     @lineElement.attr 'y2', y if @lineElement
+            else
+                if target.attr('data-object-id') is @model.id
+                    @dispatcher.trigger 'note:highlight', @model unless @highlighted
+                else
+                    @dispatcher.trigger 'note:unhighlight', @model if @highlighted
 
         onToolRelease: (ev, tool)->
             target = d3.select ev.target
@@ -109,15 +112,37 @@ define ["d3view"], (D3View)->
                 if tool.type is 'move'
                     cx = @circleElement.attr 'cx'
                     cy = @circleElement.attr 'cy'
+
+                    @doc.getModel().beginCompoundOperation()
                     @model.get('hx').setText cx
                     @model.get('hy').setText cy
+                    @doc.getModel().endCompoundOperation()
 
                     @engaged = false
 
         onCollaboratorSelected: (collaborator)->
             if collaborator.userId is @model.get('userId').getText() and @circleElement?
-                @circleElement.transition().attr('fill','white').attr('r',6).duration(200)
-                @circleElement.transition().attr('fill',@model.get('color')?.getText() or 'gray').attr('r',5).delay(1000).duration(200)
+                @blink()
+
+        onNoteHighlight: (model)->
+            if model.id is @model.id
+                @highlight()
+
+        onNoteUnhighlight: (model)->
+            if model.id is @model.id
+                @unhighlight()
+
+        blink: ->
+            @circleElement?.transition().attr('fill','white').attr('r',6).duration(200)
+            @circleElement?.transition().attr('fill',@model.get('color')?.getText() or 'gray').attr('r',5).delay(500).duration(200)
+
+        highlight: ->
+            @circleElement?.transition().attr('fill','white').attr('r',6).duration(200)
+            @highlighted = yes
+
+        unhighlight: ->
+            @circleElement?.transition().attr('fill',@model.get('color')?.getText() or 'gray').attr('r',5).duration(200)
+            @highlighted = no
 
         render: ->
             @d3el.attr

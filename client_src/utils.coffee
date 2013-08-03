@@ -1,7 +1,7 @@
 define ->
   parseLocation = (url) ->
     
-    url = url.toString() if typeof url is "object"
+    url = url.toString()
     
     result = {}
 
